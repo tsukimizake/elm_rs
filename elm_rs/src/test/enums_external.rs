@@ -11,6 +11,7 @@ enum Enum {
     Tuple2(i32, i32),
     Named1 { field: i32 },
     Named2 { field: i32 },
+    Recursive(Box<Enum>),
 }
 
 #[test]
@@ -31,4 +32,9 @@ fn tuple() {
 #[test]
 fn named() {
     super::test_json(Enum::Named1 { field: 123 });
+}
+
+#[test]
+fn recursive() {
+    super::test_json(Enum::Recursive(Box::new(Enum::Unit1)));
 }

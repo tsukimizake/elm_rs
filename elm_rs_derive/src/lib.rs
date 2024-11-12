@@ -37,10 +37,16 @@ pub fn derive_elm_serialize(input: TokenStream) -> TokenStream {
 
 /// Derive `ElmDecode`.
 #[cfg(feature = "json")]
-#[proc_macro_derive(ElmDecode)]
+#[proc_macro_derive(ElmDecode, attributes(elm_rs))]
 pub fn derive_elm_deserialize(input: TokenStream) -> TokenStream {
     elm_decode::derive(input)
 }
+
+// #[cfg(feature = "json")]
+// #[proc_macro_attribute]
+// pub fn elm_rs(input: TokenStream, _hone: TokenStream) -> TokenStream {
+//     input
+// }
 
 /// Derive `ElmQuery`.
 #[cfg(feature = "query")]

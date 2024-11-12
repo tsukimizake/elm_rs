@@ -31,6 +31,7 @@ impl ContainerAttributes {
 pub struct VariantAttributes {
     #[cfg(feature = "serde")]
     pub serde: serde::VariantAttributes,
+    pub elm_rs: elm_rs::VariantAttributes,
 }
 
 impl VariantAttributes {
@@ -39,10 +40,9 @@ impl VariantAttributes {
 
         for attr in attrs {
             if let Ok(Meta::List(meta_list)) = attr.parse_meta() {
-                /* todo
                 if meta_list.path.is_ident("elm_rs") {
+                    attributes.elm_rs.parse(&meta_list);
                 }
-                */
                 #[cfg(feature = "serde")]
                 if meta_list.path.is_ident("serde") {
                     attributes.serde.parse(meta_list);
@@ -58,6 +58,7 @@ impl VariantAttributes {
 pub struct FieldAttributes {
     #[cfg(feature = "serde")]
     pub serde: serde::FieldAttributes,
+    pub elm_rs: elm_rs::FieldAttributes,
 }
 
 impl FieldAttributes {
@@ -65,10 +66,9 @@ impl FieldAttributes {
         let mut attributes = Self::default();
         for attr in attrs {
             if let Ok(Meta::List(meta_list)) = attr.parse_meta() {
-                /* todo
                 if meta_list.path.is_ident("elm_rs") {
+                    attributes.elm_rs.parse(&meta_list);
                 }
-                */
                 #[cfg(feature = "serde")]
                 if meta_list.path.is_ident("serde") {
                     attributes.serde.parse(meta_list);
@@ -76,6 +76,59 @@ impl FieldAttributes {
             }
         }
         attributes
+    }
+}
+
+pub mod elm_rs {
+    use syn::{Meta, MetaList, NestedMeta};
+    pub struct VariantAttributes {
+        pub lazy: bool,
+    }
+    impl Default for VariantAttributes {
+        fn default() -> Self {
+            Self { lazy: false }
+        }
+    }
+    impl VariantAttributes {
+        pub fn parse(&mut self, meta_list: &MetaList) {
+            meta_list.nested.iter().for_each(|nested| {
+                if let NestedMeta::Meta(meta) = nested {
+                    match meta {
+                        Meta::Path(path) => {
+                            if path.is_ident("lazy") {
+                                self.lazy = true;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            });
+        }
+    }
+    pub struct FieldAttributes {
+        pub lazy: bool,
+    }
+    impl Default for FieldAttributes {
+        fn default() -> Self {
+            Self { lazy: false }
+        }
+    }
+
+    impl FieldAttributes {
+        pub fn parse(&mut self, meta_list: &MetaList) {
+            meta_list.nested.iter().for_each(|nested| {
+                if let NestedMeta::Meta(meta) = nested {
+                    match meta {
+                        Meta::Path(path) => {
+                            if path.is_ident("lazy") {
+                                self.lazy = true;
+                            }
+                        }
+                        _ => {}
+                    }
+                }
+            });
+        }
     }
 }
 

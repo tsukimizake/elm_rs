@@ -9,8 +9,13 @@ enum Enum {
     Newtype2(i32),
     Tuple1(i32, i32),
     Tuple2(i32, i32),
-    Named1 { field: i32 },
-    Named2 { field: i32 },
+    Named1 {
+        field: i32,
+    },
+    Named2 {
+        field: i32,
+    },
+    #[elm_rs(lazy)]
     Recursive(Box<Enum>),
 }
 

@@ -232,9 +232,12 @@ fn enum_external(
 
         let decoder = match &variant.variant {
             EnumVariantKind::Unit => enum_variant_unit_external(&elm_name, &elm_name_decode),
-            EnumVariantKind::Newtype(inner) => {
-                enum_variant_newtype_external(&elm_name, &elm_name_decode, inner)
-            }
+            EnumVariantKind::Newtype(inner) => enum_variant_newtype_external(
+                &elm_name,
+                &elm_name_decode,
+                inner,
+                variant.elm_rs_attributes.lazy,
+            ),
             EnumVariantKind::Tuple(types) => {
                 enum_variant_tuple_external(&elm_name, &elm_name_decode, types)
             }
@@ -601,12 +604,14 @@ fn enum_variant_newtype_external(
     variant_name: &str,
     variant_name_decode: &str,
     inner_type: &TokenStream2,
+    lazy: bool,
 ) -> TokenStream2 {
     quote! {::std::format!("\
     Json.Decode.map {enum_variant} (Json.Decode.field \"{enum_variant_deserialize}\" ({decoder}))",
         enum_variant = #variant_name,
         enum_variant_deserialize = #variant_name_decode,
-        decoder = <#inner_type as ::elm_rs::ElmDecode>::decoder_type(),
+        decoder = if #lazy { ::std::format!("Json.Decode.lazy (\\() -> {})",<#inner_type as ::elm_rs::ElmDecode>::decoder_type()) }
+                    else {<#inner_type as ::elm_rs::ElmDecode>::decoder_type()},
     )}
 }
 

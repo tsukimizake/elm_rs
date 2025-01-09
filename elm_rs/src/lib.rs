@@ -7,6 +7,9 @@ mod elm_query;
 #[cfg(test)]
 mod test;
 
+#[cfg(test)]
+extern crate self as elm_rs;
+
 pub use self::{
     elm::Elm,
     elm_decode::ElmDecode,

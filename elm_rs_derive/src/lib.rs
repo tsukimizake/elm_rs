@@ -264,6 +264,7 @@ struct EnumVariant {
     span: Span,
     #[cfg(feature = "serde")]
     serde_attributes: attributes::serde::VariantAttributes,
+    elm_rs_attributes: attributes::elm_rs::VariantAttributes,
 }
 
 impl EnumVariant {
@@ -351,6 +352,7 @@ impl EnumVariant {
             span,
             #[cfg(feature = "serde")]
             serde_attributes: variant_attributes.serde,
+            elm_rs_attributes: variant_attributes.elm_rs,
         };
         Ok(variant)
     }

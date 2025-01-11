@@ -17,6 +17,8 @@ enum Enum {
     },
     #[elm_rs(lazy)]
     Recursive(Box<Enum>),
+    #[elm_rs(lazy)]
+    RecursiveList(Vec<Enum>),
 }
 
 #[test]
@@ -42,4 +44,9 @@ fn named() {
 #[test]
 fn recursive() {
     super::test_json(Enum::Recursive(Box::new(Enum::Unit1)));
+}
+
+#[test]
+fn recursive_list() {
+    super::test_json(Enum::RecursiveList(vec![Enum::Unit1, Enum::Unit2]));
 }
